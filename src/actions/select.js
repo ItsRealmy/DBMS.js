@@ -16,7 +16,7 @@ module.exports = (db, cache) => {
                 db.get(id, (err, value) => {
                     if (err) return reject(err);
                     // Returned parsed value
-                    else return resolve(parse(value));
+                    else return resolve({ id, body: parse(value) });
                 });
             });
         },
@@ -32,7 +32,7 @@ module.exports = (db, cache) => {
                         for (let i in query) {
                             // Check if item matches
                             if (data.value.includes(singleItem(i, query[i]))) {
-                                matchedItems.push(data.value);
+                                matchedItems.push({ key: data.key, value: data.value });
                                 // Add to cache
                                 cache.set(data.key, data.value);
                             }
@@ -43,7 +43,7 @@ module.exports = (db, cache) => {
 
                         for (let item of matchedItems) {
                             // Parse matched item
-                            parsedMatchedItems.push(parse(item));
+                            parsedMatchedItems.push({ id: item.key, body: parse(item.value) });
                         }
 
                         return resolve(parsedMatchedItems);
